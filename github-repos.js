@@ -5,12 +5,11 @@
 //http://www.gnu.org/licenses/gpl-2.0.txt
 GITHUB_JSON_URL = "http://github.com/api/v1/json/{0}?callback={1}";
 DYNAMIC_SCRIPT_TEMPLATE = "<script src='{0}' type='text/javascript' ></script>";
-GITHUB_PROJECTS_CLASS = ".github-projects";
+GITHUB_PROJECTS_SELECTOR = ".github-projects";
 REPO_TEMPLATE =
     "<div class='github-repo'>"
     +   "<a href='{0}' target='_blank'>"
-    +  	  "{1}<img class='github-repo-link-image'"
-    +           "src='http://erlanguid.com/icons/external.png'"
+    +  	  "{1}" //+ "<img class='github-repo-link-image' src='http://erlanguid.com/icons/external.png'"
     +	  "</a>"
     +"</div>";
 
@@ -25,7 +24,7 @@ var GitHubRepos = new function(){
         var github_usernames = new Array();
 
         //for all the github-projects divs 
-        $(GITHUB_PROJECTS_CLASS).each(function(i) {
+        $(GITHUB_PROJECTS_SELECTOR).each(function(i) {
             //create an array of all unique userids in the page
             if(this.id != undefined)
             {
@@ -70,6 +69,31 @@ var GitHubRepos = new function(){
                 proj_div.style.display = "block";
             }
         }
+    }
+
+    this.ToggleRepoVisibility = function(element)
+    {
+        var HIDE_TEXT = 'hide';
+        var SHOW_TEXT = 'view';
+
+        //take the show hide element, generally a link 
+        //and change the text to what makes sense.
+        $(element).children('a.show-github-repos').each( function() {
+            if(this.innerHTML == SHOW_TEXT)
+                this.innerHTML = HIDE_TEXT;
+            else
+                this.innerHTML = SHOW_TEXT;
+        }); 
+
+        //show hide the elements given their state
+        $(element).siblings().each( function(){
+
+            var jElement = $(this);
+            if(jElement.css('display') == 'none')
+                jElement.show();
+            else
+                jElement.hide();   
+        });
     } 
 }
 //used to create clean insertion of strings into templates
@@ -82,4 +106,10 @@ function format(str)
     return str;
 }
 //Go Get Those REPOS!
-$(document).ready(function(){GitHubRepos.GetRepos();});
+$(document).ready(function(){
+
+    GitHubRepos.GetRepos(); 
+
+    });
+
+
